@@ -1,0 +1,22 @@
+# Satır sonlarını projeye sabitle: tüm metin dosyaları depoda ve çalışma
+# kopyasında LF kullanır. Bu, her geliştiricinin core.autocrlf ayarından
+# bağımsız tutarlılık sağlar ve "LF will be replaced by CRLF" uyarısını susturur.
+* text=auto eol=lf
+
+# Windows betikleri CRLF olmalı (yalnızca takip edilirlerse geçerli)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary dosyalar — asla satır sonu dönüşümü yapma
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary
+*.woff binary
+*.woff2 binary
+*.apk  binary
+*.jks  binary
+*.keystore binary
