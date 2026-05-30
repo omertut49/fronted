@@ -42,7 +42,7 @@ yarn-error.*
 .idea/
 
 # yerel build/log artefaktlari
-_apkbuild.log
+_apkbuild*.log
 
 # generated native folders
 /ios
