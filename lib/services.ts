@@ -1,9 +1,11 @@
 /** Backend uçlarına tipli erişim katmanı (React Query ile kullanılır). */
 import { api } from './api';
 import type {
+  AiPhase,
   AuthResponse,
   Game,
   GenerateIdeaResponse,
+  IdeaPlan,
   IdeaSession,
   Phase,
   Player,
@@ -29,8 +31,12 @@ export const authApi = {
 export const gamesApi = {
   list: () => api.get<Game[]>('/games').then((r) => r.data),
   get: (id: string) => api.get<Game>(`/games/${id}`).then((r) => r.data),
-  create: (body: { title: string; description?: string; genre?: string }) =>
-    api.post<Game>('/games', body).then((r) => r.data),
+  create: (body: {
+    title: string;
+    description?: string;
+    genre?: string;
+    phases?: AiPhase[];
+  }) => api.post<Game>('/games', body).then((r) => r.data),
   update: (id: string, body: Partial<Pick<Game, 'title' | 'description' | 'status' | 'genre'>>) =>
     api.patch<Game>(`/games/${id}`, body).then((r) => r.data),
   remove: (id: string) => api.delete(`/games/${id}`).then((r) => r.data),
@@ -102,11 +108,17 @@ export const reportsApi = {
 };
 
 // ---- Ideas (AI) ----
+// Not: Yapay zekâ planı üretmek 15-30 sn sürebilir; global 20 sn timeout'u
+// aşmamak için bu uca özel uzun timeout veriyoruz.
 export const ideasApi = {
   generate: (prompt: string) =>
-    api.post<GenerateIdeaResponse>('/ideas/generate', { prompt }).then((r) => r.data),
-  confirm: (sessionId: string) =>
-    api.post<{ gameId: string; message: string }>(`/ideas/sessions/${sessionId}/confirm`).then((r) => r.data),
+    api
+      .post<GenerateIdeaResponse>('/ideas/generate', { prompt }, { timeout: 90000 })
+      .then((r) => r.data),
+  confirm: (sessionId: string, plan: IdeaPlan) =>
+    api
+      .post<{ gameId: string; message: string }>(`/ideas/sessions/${sessionId}/confirm`, plan)
+      .then((r) => r.data),
   getSession: (id: string) => api.get<IdeaSession>(`/ideas/sessions/${id}`).then((r) => r.data),
 };
 
